@@ -1,0 +1,10 @@
+project_id = "ygengavwdcrgmqxqywvk"
+
+[functions.generate-ai-test]
+verify_jwt = false
+
+[functions.study-tools-process]
+verify_jwt = false
+
+[functions.ai-master-chat]
+verify_jwt = false
