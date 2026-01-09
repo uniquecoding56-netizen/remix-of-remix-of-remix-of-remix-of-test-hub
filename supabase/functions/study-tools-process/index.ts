@@ -76,7 +76,7 @@ serve(async (req) => {
     // Extract YouTube video ID from URL
     const extractYouTubeId = (url: string): string | null => {
       const patterns = [
-        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([^&\n?#]+)/,
         /youtube\.com\/watch\?.*v=([^&\n?#]+)/
       ];
       for (const pattern of patterns) {
@@ -84,6 +84,15 @@ serve(async (req) => {
         if (match) return match[1];
       }
       return null;
+    };
+
+    // Check if URL is a YouTube URL
+    const isYouTubeUrl = (url: string): boolean => {
+      return url.includes('youtube.com/watch') || 
+             url.includes('youtu.be/') || 
+             url.includes('youtube.com/embed') ||
+             url.includes('youtube.com/live/') ||
+             url.includes('youtube.com/shorts/');
     };
 
     // Get YouTube video metadata
@@ -214,6 +223,62 @@ Video URL: ${url}`;
 
     // Handle website URL with content analysis and filtering
     if (type === 'website' && url) {
+      // Check if it's actually a YouTube URL and redirect to YouTube handler
+      if (isYouTubeUrl(url)) {
+        const videoId = extractYouTubeId(url);
+        if (videoId) {
+          // Redirect to YouTube processing
+          const metadata = await getYouTubeMetadata(videoId);
+          let transcript = '';
+          let transcriptMethod = '';
+
+          // Try multiple methods to get transcript
+          try {
+            const transcriptApiUrl = `https://www.youtube.com/api/timedtext?lang=en&v=${videoId}`;
+            const transcriptResponse = await fetch(transcriptApiUrl);
+            if (transcriptResponse.ok) {
+              const transcriptXml = await transcriptResponse.text();
+              const textMatches = transcriptXml.match(/<text[^>]*>([^<]+)<\/text>/g);
+              if (textMatches && textMatches.length > 0) {
+                transcript = textMatches.map(match => match.replace(/<[^>]+>/g, '')).join(' ');
+                transcriptMethod = 'official_captions';
+              }
+            }
+          } catch (e) {
+            console.log('YouTube transcript method 1 failed:', e);
+          }
+
+          // Use AI to generate content if no transcript
+          if (!transcript) {
+            try {
+              const aiPrompt = `Analyze this YouTube video: ${url}\nVideo Title: ${metadata.title}\n\nSince I cannot access the video transcript directly, please:\n1. Provide educational content related to the video topic based on the title\n2. Create a comprehensive study guide\n3. Include key concepts and study tips\n\nMake it educational and useful for studying.`;
+              const aiData = await callAI([{ role: 'user', content: aiPrompt }]);
+              transcript = aiData.choices?.[0]?.message?.content || '';
+              transcriptMethod = 'ai_generated';
+            } catch (e) {
+              console.error('AI generation failed:', e);
+            }
+          }
+
+          if (!transcript) {
+            transcript = `This YouTube video (${metadata.title}) could not be automatically transcribed.\n\nTo study from this video:\n1. Open the video on YouTube and click "Show transcript"\n2. Copy the transcript and paste it in the "Paste" tab\n\nVideo URL: ${url}`;
+            transcriptMethod = 'manual_guidance';
+          }
+
+          return new Response(JSON.stringify({ 
+            content: transcript,
+            title: metadata.title,
+            videoId: videoId,
+            videoUrl: url,
+            thumbnail: metadata.thumbnail,
+            transcriptMethod: transcriptMethod,
+            language: 'auto-detected'
+          }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          });
+        }
+      }
+
       // First, check if URL is valid and fetch content
       let websiteContent = '';
       let websiteTitle = 'Website Content';

@@ -159,12 +159,16 @@ export function StudyToolsInput({
   };
 
   const isYouTubeUrl = (url: string): boolean => {
-    return url.includes('youtube.com/watch') || url.includes('youtu.be/') || url.includes('youtube.com/embed');
+    return url.includes('youtube.com/watch') || 
+           url.includes('youtu.be/') || 
+           url.includes('youtube.com/embed') ||
+           url.includes('youtube.com/live/') ||
+           url.includes('youtube.com/shorts/');
   };
 
   const extractYouTubeId = (url: string): string | null => {
     const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([^&\n?#]+)/,
       /youtube\.com\/watch\?.*v=([^&\n?#]+)/
     ];
     for (const pattern of patterns) {

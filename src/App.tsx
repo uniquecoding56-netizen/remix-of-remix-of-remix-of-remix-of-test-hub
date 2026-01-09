@@ -15,6 +15,7 @@ import TakeTest from "./pages/TakeTest";
 import History from "./pages/History";
 import StudyTools from "./pages/StudyTools";
 import SavedFlashcards from "./pages/SavedFlashcards";
+import SavedContent from "./pages/SavedContent";
 import SharedContent from "./pages/SharedContent";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/history" element={<History />} />
               <Route path="/study-tools" element={<StudyTools />} />
               <Route path="/saved-flashcards" element={<SavedFlashcards />} />
+              <Route path="/saved-content" element={<SavedContent />} />
               <Route path="/shared/:shareToken" element={<SharedContent />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
