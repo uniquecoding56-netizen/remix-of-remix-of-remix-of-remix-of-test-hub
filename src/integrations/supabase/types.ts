@@ -210,6 +210,39 @@ export type Database = {
           },
         ]
       }
+      saved_flashcards: {
+        Row: {
+          created_at: string
+          flashcards: Json
+          id: string
+          source_type: string | null
+          source_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          flashcards?: Json
+          id?: string
+          source_type?: string | null
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          flashcards?: Json
+          id?: string
+          source_type?: string | null
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_tests: {
         Row: {
           created_at: string
@@ -238,6 +271,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_youtube_videos: {
+        Row: {
+          created_at: string
+          generated_notes: string | null
+          id: string
+          transcript: string | null
+          updated_at: string
+          user_id: string
+          video_id: string
+          video_thumbnail: string | null
+          video_title: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          generated_notes?: string | null
+          id?: string
+          transcript?: string | null
+          updated_at?: string
+          user_id: string
+          video_id: string
+          video_thumbnail?: string | null
+          video_title: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          generated_notes?: string | null
+          id?: string
+          transcript?: string | null
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+          video_thumbnail?: string | null
+          video_title?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      shared_content: {
+        Row: {
+          content_data: Json
+          content_type: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          share_token: string
+          thumbnail_url: string | null
+          title: string | null
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          content_data: Json
+          content_type: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          share_token: string
+          thumbnail_url?: string | null
+          title?: string | null
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          content_data?: Json
+          content_type?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          share_token?: string
+          thumbnail_url?: string | null
+          title?: string | null
+          user_id?: string
+          view_count?: number
+        }
+        Relationships: []
       }
       test_attempts: {
         Row: {
@@ -356,6 +467,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_notifications: {
+        Row: {
+          created_at: string
+          emoji: string | null
+          id: string
+          is_read: boolean
+          message: string
+          notification_type: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          is_read?: boolean
+          message: string
+          notification_type?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          notification_type?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_settings: {
         Row: {

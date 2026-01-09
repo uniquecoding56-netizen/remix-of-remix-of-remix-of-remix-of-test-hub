@@ -21,9 +21,20 @@ const INSPIRATIONAL_QUOTES = [
   { emoji: '🎪', quote: 'Life is a journey, not a destination. Enjoy the learning process!', thought: 'The journey of learning is as important as the destination.' },
 ];
 
+interface Notification {
+  id: string;
+  user_id: string;
+  notification_type: string;
+  title: string;
+  message: string;
+  emoji?: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 export function useNotifications() {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -39,7 +50,7 @@ export function useNotifications() {
 
     try {
       const { data, error } = await supabase
-        .from('user_notifications')
+        .from('user_notifications' as any)
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
@@ -47,8 +58,9 @@ export function useNotifications() {
 
       if (error) throw error;
 
-      setNotifications(data || []);
-      setUnreadCount((data || []).filter((n: any) => !n.is_read).length);
+      const typedData = (data || []) as unknown as Notification[];
+      setNotifications(typedData);
+      setUnreadCount(typedData.filter((n) => !n.is_read).length);
     } catch (error: any) {
       // If table doesn't exist, silently fail (non-critical feature)
       if (error?.code === '42P01' || error?.message?.includes('does not exist')) {
@@ -64,8 +76,8 @@ export function useNotifications() {
 
     try {
       // Check last notification
-      const { data: lastNotification, error: queryError } = await supabase
-        .from('user_notifications')
+      const { data: lastNotificationData, error: queryError } = await supabase
+        .from('user_notifications' as any)
         .select('created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
@@ -81,16 +93,17 @@ export function useNotifications() {
       }
 
       const now = new Date();
-      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+      const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
 
-      // If no notification or last notification is older than 3 days
-      if (!lastNotification || new Date(lastNotification.created_at) < threeDaysAgo) {
+      // If no notification or last notification is older than 2 days
+      const lastNotification = lastNotificationData as unknown as { created_at: string } | null;
+      if (!lastNotification || new Date(lastNotification.created_at) < twoDaysAgo) {
         // Get random quote
         const randomQuote = INSPIRATIONAL_QUOTES[Math.floor(Math.random() * INSPIRATIONAL_QUOTES.length)];
 
         // Create notification
         const { error } = await supabase
-          .from('user_notifications')
+          .from('user_notifications' as any)
           .insert({
             user_id: user.id,
             notification_type: 'inspirational_quote',
@@ -130,7 +143,7 @@ export function useNotifications() {
 
     try {
       const { error } = await supabase
-        .from('user_notifications')
+        .from('user_notifications' as any)
         .update({ is_read: true })
         .eq('id', notificationId)
         .eq('user_id', user.id);
@@ -147,7 +160,7 @@ export function useNotifications() {
 
     try {
       const { error } = await supabase
-        .from('user_notifications')
+        .from('user_notifications' as any)
         .update({ is_read: true })
         .eq('user_id', user.id)
         .eq('is_read', false);
@@ -167,5 +180,3 @@ export function useNotifications() {
     refreshNotifications: loadNotifications
   };
 }
-
-

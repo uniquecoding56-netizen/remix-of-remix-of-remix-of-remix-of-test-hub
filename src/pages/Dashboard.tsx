@@ -29,7 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Search, BookOpen, Bookmark, FileText, X, Trophy, SlidersHorizontal, Star, BarChart3, GraduationCap, Sparkles, Cards } from 'lucide-react';
+import { Search, BookOpen, Bookmark, FileText, X, Trophy, SlidersHorizontal, Star, BarChart3, GraduationCap, Sparkles, Layers } from 'lucide-react';
 import { TestWithProfile, Question, TestCategory, CATEGORY_LABELS, CATEGORY_COLORS } from '@/types/test';
 import { CLASS_STANDARDS } from '@/data/cbseData';
 
@@ -220,7 +220,7 @@ export default function Dashboard() {
               variant="outline"
               className="gap-2"
             >
-              <Cards className="h-4 w-4" />
+              <Layers className="h-4 w-4" />
               Saved Flashcards
             </Button>
             <CreateTestDialog onSuccess={fetchData} />

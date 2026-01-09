@@ -568,14 +568,15 @@ Always be helpful, clear, and educational!`;
     // Save flashcards
     if (type === 'save-flashcards' && body.flashcards) {
       try {
-        const { flashcards, title, contentHash } = body;
+        const { flashcards, title, sourceType, sourceUrl } = body;
         const { data, error } = await supabase
           .from('saved_flashcards')
           .insert({
             user_id: user.id,
             flashcards: flashcards,
             title: title || 'Untitled Flashcards',
-            content_hash: contentHash || null
+            source_type: sourceType || null,
+            source_url: sourceUrl || null
           })
           .select()
           .single();
@@ -583,7 +584,7 @@ Always be helpful, clear, and educational!`;
         if (error) {
           console.error('Database error saving flashcards:', error);
           return new Response(JSON.stringify({ 
-            error: error.message || 'Failed to save flashcards. Please ensure the database migration has been applied.',
+            error: error.message || 'Failed to save flashcards.',
             details: error.details || error.hint || ''
           }), {
             status: 400,
@@ -756,13 +757,21 @@ Always be helpful, clear, and educational!`;
       // Generate unique share token
       const shareToken = crypto.randomUUID().replace(/-/g, '').substring(0, 16);
       
+      // Get thumbnail for YouTube content
+      let thumbnailUrl = null;
+      if (contentType === 'youtube' && contentData.videoThumbnail) {
+        thumbnailUrl = contentData.videoThumbnail;
+      }
+      
       const { data, error } = await supabase
         .from('shared_content')
         .insert({
           share_token: shareToken,
           content_type: contentType,
           content_data: contentData,
-          shared_by_user_id: user.id,
+          user_id: user.id,
+          title: contentData.title || null,
+          thumbnail_url: thumbnailUrl,
           expires_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days
         })
         .select()
@@ -770,14 +779,15 @@ Always be helpful, clear, and educational!`;
 
       if (error) throw error;
       
-      // Get the frontend URL from environment or construct from Supabase URL
-      const frontendUrl = Deno.env.get('FRONTEND_URL') || supabaseUrl.replace('.supabase.co', '').replace('https://', 'https://pdfstudy.online');
+      // Get the frontend URL from environment or use default
+      const frontendUrl = Deno.env.get('FRONTEND_URL') || 'https://pdfstudy.online';
       const shareUrl = `${frontendUrl}/shared/${shareToken}`;
       
       return new Response(JSON.stringify({ 
         success: true, 
         shareToken: shareToken,
-        shareUrl: shareUrl
+        shareUrl: shareUrl,
+        thumbnailUrl: thumbnailUrl
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -817,7 +827,9 @@ Always be helpful, clear, and educational!`;
       return new Response(JSON.stringify({ 
         contentType: data.content_type,
         contentData: data.content_data,
-        sharedBy: data.shared_by_user_id,
+        title: data.title,
+        thumbnailUrl: data.thumbnail_url,
+        sharedBy: data.user_id,
         viewCount: (data.view_count || 0) + 1
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

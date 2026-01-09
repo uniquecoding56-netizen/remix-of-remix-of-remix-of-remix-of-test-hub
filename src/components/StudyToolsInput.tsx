@@ -25,6 +25,8 @@ export interface ContentMetadata {
   language?: string;
   duration?: string;
   title?: string;
+  videoId?: string;
+  thumbnail?: string;
 }
 
 const SUPPORTED_FILE_TYPES = {
