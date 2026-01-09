@@ -225,12 +225,20 @@ export default function SharedContent() {
     }
   };
 
+  // Get OG image for sharing
+  const getOgImage = () => {
+    if (sharedContent?.thumbnailUrl) return sharedContent.thumbnailUrl;
+    if (sharedContent?.contentData?.videoThumbnail) return sharedContent.contentData.videoThumbnail;
+    return undefined;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
         title={`${getTitle()} - PDFStudy.online`}
         description={`View shared ${sharedContent.contentType} content from PDFStudy.online`}
-        ogImage={sharedContent.contentData.videoThumbnail || undefined}
+        ogImage={getOgImage()}
+        twitterCard="summary_large_image"
       />
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">

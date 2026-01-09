@@ -19,6 +19,8 @@ interface SavedFlashcard {
   title: string;
   created_at: string;
   updated_at: string;
+  source_type?: string;
+  source_url?: string;
 }
 
 export default function SavedFlashcards() {
@@ -41,12 +43,24 @@ export default function SavedFlashcards() {
   const loadSavedFlashcards = async () => {
     try {
       const { data, error } = await supabase
-        .from('saved_flashcards')
+        .from('saved_flashcards' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSavedFlashcards(data || []);
+      
+      // Map the data to ensure proper typing
+      const mappedData: SavedFlashcard[] = (data || []).map((item: any) => ({
+        id: item.id,
+        flashcards: Array.isArray(item.flashcards) ? item.flashcards : [],
+        title: item.title,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        source_type: item.source_type,
+        source_url: item.source_url
+      }));
+      
+      setSavedFlashcards(mappedData);
     } catch (error) {
       console.error('Error loading saved flashcards:', error);
       toast.error('Failed to load saved flashcards');
@@ -60,7 +74,7 @@ export default function SavedFlashcards() {
 
     try {
       const { error } = await supabase
-        .from('saved_flashcards')
+        .from('saved_flashcards' as any)
         .delete()
         .eq('id', id);
 

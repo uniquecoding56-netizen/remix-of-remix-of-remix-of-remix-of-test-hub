@@ -57,8 +57,7 @@ const App = () => (
             </Routes>
             <AIMasterChat />
             <PWAInstallPrompt />
-            {/* Temporarily disabled until database migration is applied */}
-            {/* <NotificationSystem /> */}
+            <NotificationSystem />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
