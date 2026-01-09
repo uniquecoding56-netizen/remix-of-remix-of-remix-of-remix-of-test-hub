@@ -243,6 +243,69 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_notes: {
+        Row: {
+          created_at: string
+          id: string
+          notes: Json
+          source_type: string | null
+          source_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: Json
+          source_type?: string | null
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: Json
+          source_type?: string | null
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_qa_conversations: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          messages: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          messages?: Json
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          messages?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_tests: {
         Row: {
           created_at: string
@@ -271,6 +334,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_website_content: {
+        Row: {
+          content: string | null
+          created_at: string
+          generated_content: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          website_title: string | null
+          website_url: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          generated_content?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          website_title?: string | null
+          website_url: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          generated_content?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          website_title?: string | null
+          website_url?: string
+        }
+        Relationships: []
       }
       saved_youtube_videos: {
         Row: {
