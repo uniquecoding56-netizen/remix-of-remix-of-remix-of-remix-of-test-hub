@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,9 +12,6 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import {
   DropdownMenu,
@@ -43,6 +40,12 @@ const WELCOME_MESSAGE: Message = {
   content: "Hello! 👋 I'm **AI Master**, your friendly study companion! I'm here to help you learn and understand any subject.\n\n📸 **NEW!** You can now share images with me! Take a photo of your homework or upload an image, and I'll help you solve it.\n\n📚 **What I can help with:**\n- Math problems (step-by-step solutions)\n- Science concepts & experiments\n- Language & grammar questions\n- Any subject you're studying!\n\nJust type your question or share an image. Let's learn together! 🎓"
 };
 
+// Forward ref wrapper for DropdownMenuTrigger
+const DropdownTriggerButton = forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>((props, ref) => (
+  <Button ref={ref} {...props} />
+));
+DropdownTriggerButton.displayName = 'DropdownTriggerButton';
+
 export function AIMasterChat() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
@@ -54,7 +57,6 @@ export function AIMasterChat() {
   const [unreadCount, setUnreadCount] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [chatId, setChatId] = useState<string | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionTitle, setCurrentSessionTitle] = useState('New Chat');
@@ -214,43 +216,136 @@ export function AIMasterChat() {
       URL.revokeObjectURL(url);
       toast.success('Chat exported as text file');
     } else {
-      // Simple PDF export using a printable format
+      // Professional PDF export with PDFStudy branding
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.write(`
           <!DOCTYPE html>
           <html>
           <head>
-            <title>${currentSessionTitle} - AI Master Chat</title>
+            <title>${currentSessionTitle} - PDFStudy.online</title>
             <style>
-              body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
-              h1 { color: #8b5cf6; border-bottom: 2px solid #8b5cf6; padding-bottom: 10px; }
-              .message { margin: 20px 0; padding: 15px; border-radius: 10px; }
-              .user { background: #8b5cf6; color: white; margin-left: 50px; }
-              .assistant { background: #f3f4f6; margin-right: 50px; }
-              .role { font-weight: bold; margin-bottom: 10px; }
-              hr { border: none; border-top: 1px dashed #ccc; margin: 20px 0; }
-              .footer { text-align: center; color: #888; margin-top: 40px; font-size: 12px; }
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                padding: 40px; 
+                max-width: 800px; 
+                margin: 0 auto;
+                line-height: 1.6;
+                color: #333;
+              }
+              .header {
+                text-align: center;
+                padding-bottom: 25px;
+                border-bottom: 3px solid #6366f1;
+                margin-bottom: 30px;
+              }
+              .logo {
+                font-size: 32px;
+                font-weight: bold;
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+              }
+              .tagline {
+                font-size: 14px;
+                color: #6b7280;
+                margin-bottom: 15px;
+              }
+              h1 { 
+                color: #1f2937; 
+                font-size: 24px;
+                margin-bottom: 5px;
+              }
+              .date {
+                font-size: 12px;
+                color: #9ca3af;
+              }
+              .message { 
+                margin: 20px 0; 
+                padding: 18px; 
+                border-radius: 12px; 
+              }
+              .user { 
+                background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+                color: white; 
+                margin-left: 60px;
+                border-bottom-right-radius: 4px;
+              }
+              .assistant { 
+                background: #f8fafc; 
+                border: 1px solid #e2e8f0;
+                margin-right: 60px;
+                border-bottom-left-radius: 4px;
+              }
+              .role { 
+                font-weight: 600; 
+                margin-bottom: 10px; 
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+              .user .role { color: rgba(255,255,255,0.9); }
+              .assistant .role { color: #6366f1; }
+              .content {
+                font-size: 14px;
+                line-height: 1.7;
+              }
+              hr { 
+                border: none; 
+                border-top: 1px dashed #e2e8f0; 
+                margin: 25px 0; 
+              }
+              .footer { 
+                text-align: center; 
+                color: #9ca3af; 
+                margin-top: 50px;
+                padding-top: 25px;
+                border-top: 2px solid #e2e8f0;
+                font-size: 12px;
+              }
+              .footer a {
+                color: #6366f1;
+                text-decoration: none;
+              }
+              @media print {
+                body { padding: 20px; }
+                .message { break-inside: avoid; }
+              }
             </style>
           </head>
           <body>
-            <h1>📚 ${currentSessionTitle}</h1>
-            <p style="color: #666;">AI Master Chat Export - ${new Date().toLocaleDateString()}</p>
-            <hr>
+            <div class="header">
+              <div class="logo">📚 PDFStudy.online</div>
+              <div class="tagline">AI-Powered Study Companion</div>
+              <h1>${currentSessionTitle}</h1>
+              <div class="date">Generated on ${new Date().toLocaleDateString('en-US', { 
+                day: '2-digit', 
+                month: 'long', 
+                year: 'numeric' 
+              })}</div>
+            </div>
             ${messages.map(msg => {
-              const role = msg.role === 'user' ? 'You' : 'AI Master 🤖';
+              const role = msg.role === 'user' ? '👤 You' : '🤖 AI Master';
               const text = typeof msg.content === 'string' 
                 ? msg.content 
                 : msg.content.find(c => c.type === 'text')?.text || '';
-              return `<div class="message ${msg.role}"><div class="role">${role}</div>${text.replace(/\n/g, '<br>')}</div>`;
-            }).join('<hr>')}
-            <div class="footer">Exported from AI Master - Study Companion</div>
+              return `<div class="message ${msg.role}">
+                <div class="role">${role}</div>
+                <div class="content">${text.replace(/\n/g, '<br>')}</div>
+              </div>`;
+            }).join('')}
+            <div class="footer">
+              <p>Exported from <a href="https://pdfstudy.online">PDFStudy.online</a></p>
+              <p>Your AI-Powered Learning Platform</p>
+            </div>
           </body>
           </html>
         `);
         printWindow.document.close();
-        printWindow.print();
-        toast.success('PDF export opened in new window');
+        setTimeout(() => printWindow.print(), 300);
+        toast.success('PDF export ready');
       }
     }
   };
@@ -277,7 +372,6 @@ export function AIMasterChat() {
     setMessages([WELCOME_MESSAGE]);
     setChatId(null);
     setCurrentSessionTitle('New Chat');
-    setShowSettings(false);
     loadChatSessions();
     toast.success('Chat cleared');
   };
@@ -315,7 +409,6 @@ export function AIMasterChat() {
     if (isOpen) {
       playClickFeedback();
       setUnreadCount(0);
-      setShowSettings(false);
       setShowSessions(false);
     }
     setOpen(isOpen);
@@ -337,32 +430,58 @@ export function AIMasterChat() {
 
   const startCamera = async () => {
     try {
+      // Check if mediaDevices is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast.error('Camera not supported on this device/browser. Try uploading an image instead.');
+        return;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
+        video: { 
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
       setShowCamera(true);
-    } catch (error) {
+      
+      // Wait for state to update then set video source
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(console.error);
+        }
+      }, 100);
+    } catch (error: any) {
       console.error('Camera error:', error);
-      toast.error('Could not access camera. Please check permissions.');
+      if (error.name === 'NotAllowedError') {
+        toast.error('Camera permission denied. Please allow camera access in your browser settings.');
+      } else if (error.name === 'NotFoundError') {
+        toast.error('No camera found. Please connect a camera or use image upload.');
+      } else if (error.name === 'NotSupportedError' || error.name === 'TypeError') {
+        toast.error('Camera not supported. Try uploading an image instead.');
+      } else {
+        toast.error('Could not access camera. Try uploading an image instead.');
+      }
     }
   };
 
   const capturePhoto = () => {
-    if (videoRef.current) {
+    if (videoRef.current && videoRef.current.videoWidth > 0) {
       const canvas = document.createElement('canvas');
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(videoRef.current, 0, 0);
-        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        const imageData = canvas.toDataURL('image/jpeg', 0.85);
         setImagePreview(imageData);
         stopCamera();
+        toast.success('Photo captured!');
       }
+    } else {
+      toast.error('Camera not ready. Please wait and try again.');
     }
   };
 
@@ -381,9 +500,23 @@ export function AIMasterChat() {
         toast.error('Image too large. Please use an image under 10MB.');
         return;
       }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file.');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (event) => {
-        setImagePreview(event.target?.result as string);
+        const result = event.target?.result as string;
+        if (result) {
+          setImagePreview(result);
+          toast.success('Image uploaded!');
+        }
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read image. Please try again.');
       };
       reader.readAsDataURL(file);
     }
@@ -431,6 +564,7 @@ export function AIMasterChat() {
     const decoder = new TextDecoder();
     let textBuffer = '';
     let assistantContent = '';
+    let hasAddedAssistantMessage = false;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -455,22 +589,28 @@ export function AIMasterChat() {
           const content = parsed.choices?.[0]?.delta?.content;
           if (content) {
             assistantContent += content;
+            
+            // Update messages state with streaming content
             setMessages(prev => {
-              const last = prev[prev.length - 1];
-              if (last?.role === 'assistant' && prev.length > 1) {
-                return prev.map((m, i) => 
-                  i === prev.length - 1 ? { ...m, content: assistantContent } : m
-                );
+              if (!hasAddedAssistantMessage) {
+                hasAddedAssistantMessage = true;
+                return [...prev, { role: 'assistant', content: assistantContent }];
               }
-              return [...prev, { role: 'assistant', content: assistantContent }];
+              // Update the last assistant message
+              return prev.map((m, i) => 
+                i === prev.length - 1 && m.role === 'assistant' 
+                  ? { ...m, content: assistantContent } 
+                  : m
+              );
             });
           }
         } catch {
-          textBuffer = line + '\n' + textBuffer;
-          break;
+          // JSON parse error, continue
         }
       }
     }
+
+    return assistantContent;
   };
 
   const handleSend = async () => {
@@ -500,7 +640,9 @@ export function AIMasterChat() {
 
     try {
       const apiMessages = updatedMessages.filter((_, i) => i !== 0);
-      await streamChat(apiMessages);
+      const assistantResponse = await streamChat(apiMessages);
+      
+      // Get final messages state and save
       setMessages(prev => {
         const latestMessages = [...prev];
         // Auto-generate title from first user message if it's a new chat
@@ -519,12 +661,14 @@ export function AIMasterChat() {
         }
         return latestMessages;
       });
+      
       if (!open) {
         setUnreadCount(prev => prev + 1);
       }
     } catch (error) {
       console.error('Chat error:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to get response');
+      // Remove empty assistant message if error occurred
       setMessages(prev => {
         if (prev[prev.length - 1]?.role === 'assistant' && prev[prev.length - 1]?.content === '') {
           return prev.slice(0, -1);
@@ -668,9 +812,9 @@ export function AIMasterChat() {
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                          <DropdownTriggerButton variant="ghost" size="icon" className="h-8 w-8 shrink-0">
                             <MoreVertical className="h-4 w-4" />
-                          </Button>
+                          </DropdownTriggerButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => loadSession(session)}>
@@ -758,14 +902,14 @@ export function AIMasterChat() {
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button
+                      <DropdownTriggerButton
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
                         title="Options"
                       >
                         <MoreVertical className="h-4 w-4" />
-                      </Button>
+                      </DropdownTriggerButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={createNewSession}>
@@ -842,8 +986,11 @@ export function AIMasterChat() {
                         <Bot className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-muted rounded-2xl px-4 py-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                    <div className="bg-muted rounded-2xl px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-sm text-muted-foreground">Thinking...</span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -854,20 +1001,27 @@ export function AIMasterChat() {
             {showCamera && (
               <div className="absolute inset-0 bg-background z-50 flex flex-col">
                 <div className="flex justify-between items-center p-4 border-b">
-                  <span className="font-medium">Take a Photo</span>
+                  <span className="font-medium">📷 Take a Photo</span>
                   <Button variant="ghost" size="icon" onClick={stopCamera}>
                     <X className="h-5 w-5" />
                   </Button>
                 </div>
-                <div className="flex-1 relative">
+                <div className="flex-1 relative bg-black">
                   <video 
                     ref={videoRef} 
                     autoPlay 
                     playsInline 
+                    muted
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="p-4 flex justify-center">
+                <div className="p-4 flex justify-center gap-4 bg-background">
+                  <Button 
+                    variant="outline"
+                    onClick={stopCamera}
+                  >
+                    Cancel
+                  </Button>
                   <Button 
                     size="lg" 
                     className="rounded-full h-16 w-16"
@@ -881,12 +1035,12 @@ export function AIMasterChat() {
 
             {/* Image Preview */}
             {imagePreview && (
-              <div className="px-4 py-2 border-t border-border">
+              <div className="px-4 py-2 border-t border-border bg-muted/50">
                 <div className="relative inline-block">
                   <img 
                     src={imagePreview} 
                     alt="Preview" 
-                    className="h-20 rounded-lg object-cover"
+                    className="h-20 rounded-lg object-cover border border-border"
                   />
                   <Button
                     variant="destructive"
@@ -897,6 +1051,7 @@ export function AIMasterChat() {
                     <X className="h-3 w-3" />
                   </Button>
                 </div>
+                <p className="text-xs text-muted-foreground mt-1">Image attached • Add a question below</p>
               </div>
             )}
 
@@ -931,7 +1086,7 @@ export function AIMasterChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={imagePreview ? "Add a question about this image..." : "Ask me anything..."}
+                  placeholder={imagePreview ? "Ask about this image..." : "Ask me anything..."}
                   disabled={isLoading}
                   className="flex-1"
                 />
