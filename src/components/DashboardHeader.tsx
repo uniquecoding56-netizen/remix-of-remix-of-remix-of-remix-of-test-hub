@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { EditProfileDialog } from './EditProfileDialog';
 import { ThemeToggle } from './ThemeToggle';
 import { AboutDialog } from './AboutDialog';
+import { NotificationBell } from './NotificationBell';
 
 interface DashboardHeaderProps {
   profile: {
@@ -105,6 +106,7 @@ export function DashboardHeader({ profile, onProfileUpdate }: DashboardHeaderPro
         </div>
 
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <ThemeToggle />
           
           <DropdownMenu>
