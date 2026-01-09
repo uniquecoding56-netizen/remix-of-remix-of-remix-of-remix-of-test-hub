@@ -7,8 +7,9 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { 
   Upload, Link as LinkIcon, FileText, Loader2, X, CheckCircle, 
-  Youtube, FileAudio, FileVideo, FileType, Globe, Languages, Play, Save
+  Youtube, FileAudio, FileVideo, FileType, Globe, Languages
 } from 'lucide-react';
+import { YouTubePlayer } from './YouTubePlayer';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -477,42 +478,14 @@ export function StudyToolsInput({
           {isProcessing && <Progress value={uploadProgress} className="mt-2" />}
         </div>
 
-        {/* YouTube Video Preview */}
+        {/* YouTube Video Player with Iframe */}
         {youtubeMetadata && (
-          <div className="border rounded-lg overflow-hidden bg-muted/50">
-            <div className="relative aspect-video bg-black">
-              <img
-                src={youtubeMetadata.thumbnail}
-                alt={youtubeMetadata.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                <a
-                  href={`https://www.youtube.com/watch?v=${youtubeMetadata.videoId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-red-600 hover:bg-red-700 text-white rounded-full p-4 transition-colors"
-                >
-                  <Play className="h-6 w-6" />
-                </a>
-              </div>
-            </div>
-            <div className="p-3">
-              <p className="font-medium text-sm line-clamp-2">{youtubeMetadata.title}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <Youtube className="h-3 w-3" />
-                  YouTube
-                </Badge>
-                {isSavingYouTube && (
-                  <Badge variant="outline" className="flex items-center gap-1">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    Saving...
-                  </Badge>
-                )}
-              </div>
-            </div>
-          </div>
+          <YouTubePlayer 
+            videoId={youtubeMetadata.videoId}
+            title={youtubeMetadata.title}
+            thumbnail={youtubeMetadata.thumbnail}
+            isSaving={isSavingYouTube}
+          />
         )}
         
         <div className="flex flex-wrap gap-2">

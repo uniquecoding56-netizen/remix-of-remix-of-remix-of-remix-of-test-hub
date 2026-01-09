@@ -438,21 +438,52 @@ Return JSON array ONLY:
       });
     }
 
-    // Advanced notes generation
+    // Advanced notes generation with detailed content
     if (type === 'generate' && tool === 'notes-advanced') {
-      const prompt = `Create comprehensive study notes from this content:
+      const prompt = `You are an expert educator and study material creator. Create EXTREMELY DETAILED and COMPREHENSIVE study notes from this content.
 
-Content: ${content}
+Content to analyze:
+${content}
 
-Return JSON ONLY with this structure:
+IMPORTANT: Generate thorough, educational notes that would help a student fully understand and master this material.
+
+Return JSON ONLY with this exact structure:
 {
-  "summary": "2-3 paragraph detailed summary with markdown formatting",
-  "keyPoints": ["point 1", "point 2", ...],
-  "keyConcepts": [{"term": "concept name", "definition": "clear definition", "importance": "why it matters"}],
-  "importantQuotes": ["key quote 1", ...],
-  "actionItems": ["study task 1", ...],
-  "studyTips": ["personalized tip 1", ...]
-}`;
+  "summary": "Write a DETAILED 4-6 paragraph summary covering ALL major topics. Use markdown formatting with **bold** for key terms, bullet points, and clear sections. Include context, explanations, and connections between concepts. Make it comprehensive enough that someone could understand the topic from this alone.",
+  "keyPoints": [
+    "Detailed key point 1 with explanation and context",
+    "Detailed key point 2 with specific examples or data",
+    "Detailed key point 3 explaining the significance",
+    "... at least 8-12 key points with substance"
+  ],
+  "keyConcepts": [
+    {
+      "term": "Concept name",
+      "definition": "Detailed definition with at least 2-3 sentences explaining the concept thoroughly",
+      "importance": "Why this concept matters - practical applications, exam relevance, real-world usage",
+      "examples": "Specific examples or use cases"
+    }
+  ],
+  "importantQuotes": ["Direct quotes or key statements from the material with context"],
+  "actionItems": [
+    "Specific study task: What to memorize",
+    "Practice exercise: How to apply the concept",
+    "Review suggestion: What to revisit"
+  ],
+  "studyTips": [
+    "Memory technique specific to this content",
+    "Connection to other topics or subjects",
+    "Common mistakes to avoid",
+    "Exam preparation strategy for this material"
+  ],
+  "additionalNotes": "Any other important information, warnings, or advanced insights not covered above"
+}
+
+Generate AT LEAST:
+- 8-12 key points
+- 5-8 key concepts with detailed definitions
+- 4-6 study tips
+- 3-5 action items`;
 
       const data = await callAI([{ role: 'user', content: prompt }]);
       const text = data.choices?.[0]?.message?.content || '{}';
