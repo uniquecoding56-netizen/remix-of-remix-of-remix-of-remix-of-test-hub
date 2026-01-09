@@ -609,14 +609,15 @@ Always be helpful, clear, and educational!`;
     // Save notes
     if (type === 'save-notes' && body.notes) {
       try {
-        const { notes, title, contentHash } = body;
+        const { notes, title, sourceType, sourceUrl } = body;
         const { data, error } = await supabase
           .from('saved_notes')
           .insert({
             user_id: user.id,
             notes: notes,
             title: title || 'Untitled Notes',
-            content_hash: contentHash || null
+            source_type: sourceType || null,
+            source_url: sourceUrl || null
           })
           .select()
           .single();
@@ -624,7 +625,7 @@ Always be helpful, clear, and educational!`;
         if (error) {
           console.error('Database error saving notes:', error);
           return new Response(JSON.stringify({ 
-            error: error.message || 'Failed to save notes. Please ensure the database migration has been applied.',
+            error: error.message || 'Failed to save notes.',
             details: error.details || error.hint || ''
           }), {
             status: 400,
