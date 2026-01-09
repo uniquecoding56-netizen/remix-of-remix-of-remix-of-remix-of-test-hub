@@ -216,12 +216,12 @@ export default function Dashboard() {
               Study Tools
             </Button>
             <Button 
-              onClick={() => navigate('/saved-flashcards')} 
+              onClick={() => navigate('/saved-content')} 
               variant="outline"
               className="gap-2"
             >
               <Layers className="h-4 w-4" />
-              Saved Flashcards
+              Saved Content
             </Button>
             <CreateTestDialog onSuccess={fetchData} />
             <AITestGeneratorDialog />
