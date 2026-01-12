@@ -7,6 +7,7 @@ import { AnimatedSection } from '@/hooks/useScrollAnimation';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SEOHead } from '@/components/SEOHead';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -231,11 +232,14 @@ export default function Index() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
           {trustIndicators.map((item, index) => (
             <AnimatedSection key={index} animation="zoom" delay={index * 100}>
-              <Card className="text-center p-4 bg-card/50 backdrop-blur border-border/50 hover:shadow-lg transition-all duration-300">
-                <item.icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                <p className="font-semibold text-foreground text-sm">{item.label}</p>
-                <p className="text-xs text-muted-foreground">{item.description}</p>
-              </Card>
+              <div className="relative h-full">
+                <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
+                <Card className="relative text-center p-4 bg-card/50 backdrop-blur border-border/50 hover:shadow-lg transition-all duration-300 h-full">
+                  <item.icon className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <p className="font-semibold text-foreground text-sm">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.description}</p>
+                </Card>
+              </div>
             </AnimatedSection>
           ))}
         </div>
@@ -304,17 +308,20 @@ export default function Index() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {studyToolsFeatures.map((feature, index) => (
               <AnimatedSection key={index} animation="fade-up" delay={index * 100}>
-                <Card className="group p-6 bg-card border-border hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 h-full">
-                  <CardContent className="p-0">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <feature.icon className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">{feature.description}</p>
-                  </CardContent>
-                </Card>
+                <div className="relative h-full">
+                  <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
+                  <Card className="relative group p-6 bg-card border-border hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 h-full">
+                    <CardContent className="p-0">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                        <feature.icon className="h-7 w-7 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </div>
               </AnimatedSection>
             ))}
           </div>

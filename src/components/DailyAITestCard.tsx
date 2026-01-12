@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { Sparkles, Play, Calendar, BookOpen, GraduationCap, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -152,68 +153,71 @@ export function DailyAITestCard() {
   }
 
   return (
-    <Card className="bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 border-primary/20 overflow-hidden">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">by Artificial Intelligence</p>
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </span>
+    <div className="relative">
+      <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
+      <Card className="relative bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 border-primary/20 overflow-hidden">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">by Artificial Intelligence</p>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
               </div>
             </div>
+            <Badge className="bg-gradient-to-r from-primary to-purple-600 text-white border-0">
+              🤖 Auto Generated Daily
+            </Badge>
           </div>
-          <Badge className="bg-gradient-to-r from-primary to-purple-600 text-white border-0">
-            🤖 Auto Generated Daily
-          </Badge>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div>
-          <h3 className="font-semibold text-lg text-foreground mb-1">{dailyTest.title}</h3>
-          {dailyTest.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">{dailyTest.description}</p>
-          )}
-        </div>
+        <CardContent className="space-y-4">
+          <div>
+            <h3 className="font-semibold text-lg text-foreground mb-1">{dailyTest.title}</h3>
+            {dailyTest.description && (
+              <p className="text-sm text-muted-foreground line-clamp-2">{dailyTest.description}</p>
+            )}
+          </div>
 
-        <div className="flex flex-wrap gap-2">
-          {dailyTest.class_standard && (
-            <Badge variant="outline" className="gap-1">
-              <GraduationCap className="h-3 w-3" />
-              Class {dailyTest.class_standard}
+          <div className="flex flex-wrap gap-2">
+            {dailyTest.class_standard && (
+              <Badge variant="outline" className="gap-1">
+                <GraduationCap className="h-3 w-3" />
+                Class {dailyTest.class_standard}
+              </Badge>
+            )}
+            {dailyTest.subject && (
+              <Badge variant="outline" className="gap-1">
+                <BookOpen className="h-3 w-3" />
+                {dailyTest.subject}
+              </Badge>
+            )}
+            {dailyTest.difficulty && (
+              <Badge variant="secondary" className="capitalize">
+                {dailyTest.difficulty}
+              </Badge>
+            )}
+            <Badge variant="outline">
+              {dailyTest.questions?.length || 0} Questions
             </Badge>
-          )}
-          {dailyTest.subject && (
-            <Badge variant="outline" className="gap-1">
-              <BookOpen className="h-3 w-3" />
-              {dailyTest.subject}
-            </Badge>
-          )}
-          {dailyTest.difficulty && (
-            <Badge variant="secondary" className="capitalize">
-              {dailyTest.difficulty}
-            </Badge>
-          )}
-          <Badge variant="outline">
-            {dailyTest.questions?.length || 0} Questions
-          </Badge>
-        </div>
+          </div>
 
-        <Button 
-          onClick={() => navigate(`/test/${dailyTest.id}`)}
-          className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"
-        >
-          <Play className="h-4 w-4 mr-2" />
-          Take Today's Challenge
-        </Button>
-      </CardContent>
-    </Card>
+          <Button 
+            onClick={() => navigate(`/test/${dailyTest.id}`)}
+            className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Take Today's Challenge
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

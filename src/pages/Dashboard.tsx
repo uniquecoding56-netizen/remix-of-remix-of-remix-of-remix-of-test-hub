@@ -30,6 +30,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Search, BookOpen, Bookmark, FileText, X, Trophy, SlidersHorizontal, Star, BarChart3, GraduationCap, Sparkles, Layers } from 'lucide-react';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { TestWithProfile, Question, TestCategory, CATEGORY_LABELS, CATEGORY_COLORS } from '@/types/test';
 import { CLASS_STANDARDS } from '@/data/cbseData';
 
@@ -208,21 +209,27 @@ export default function Dashboard() {
             <p className="text-muted-foreground">Explore tests or create your own</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button 
-              onClick={() => navigate('/study-tools')} 
-              className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"
-            >
-              <Sparkles className="h-4 w-4" />
-              Study Tools
-            </Button>
-            <Button 
-              onClick={() => navigate('/saved-content')} 
-              variant="outline"
-              className="gap-2"
-            >
-              <Layers className="h-4 w-4" />
-              Saved Content
-            </Button>
+            <div className="relative">
+              <GlowingEffect spread={30} glow={true} disabled={false} proximity={48} inactiveZone={0.01} />
+              <Button 
+                onClick={() => navigate('/study-tools')} 
+                className="relative gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"
+              >
+                <Sparkles className="h-4 w-4" />
+                Study Tools
+              </Button>
+            </div>
+            <div className="relative">
+              <GlowingEffect spread={30} glow={true} disabled={false} proximity={48} inactiveZone={0.01} />
+              <Button 
+                onClick={() => navigate('/saved-content')} 
+                variant="outline"
+                className="relative gap-2"
+              >
+                <Layers className="h-4 w-4" />
+                Saved Content
+              </Button>
+            </div>
             <CreateTestDialog onSuccess={fetchData} />
             <AITestGeneratorDialog />
           </div>
