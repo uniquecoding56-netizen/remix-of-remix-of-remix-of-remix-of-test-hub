@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { Bookmark, BookmarkCheck, Star, Play, Trash2, Share2, MessageSquare, Sparkles, GraduationCap, BookOpen } from 'lucide-react';
 import { TestWithProfile, CATEGORY_LABELS, CATEGORY_COLORS } from '@/types/test';
 import { supabase } from '@/integrations/supabase/client';
@@ -134,7 +135,9 @@ export function TestCard({ test, onUpdate }: TestCardProps) {
   };
 
   return (
-    <Card className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${isAIGenerated ? 'border-primary/30 bg-gradient-to-br from-primary/5 to-transparent' : ''}`}>
+    <div className="relative h-full">
+      <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
+      <Card className={`relative group hover:shadow-lg transition-all duration-300 overflow-hidden h-full ${isAIGenerated ? 'border-primary/30 bg-gradient-to-br from-primary/5 to-transparent' : ''}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -299,6 +302,7 @@ export function TestCard({ test, onUpdate }: TestCardProps) {
         open={showReviews}
         onOpenChange={setShowReviews}
       />
-    </Card>
+      </Card>
+    </div>
   );
 }
